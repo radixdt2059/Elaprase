@@ -209,14 +209,11 @@
                 console.log('qwcd');
             }
             
-            const mediaQuery1 = window.matchMedia('(min-width: 992px)')
-                if (mediaQuery1.matches) {
-                    // Detect navigation away
-                    $(window).on("beforeunload", function () {
-                        setCookie("navigatedAway", "true", 1);
-                    });
-                }
-            });
+
+            // Detect navigation away
+            // $(window).on("beforeunload", function () {
+            //     setCookie("navigatedAway", "true", 1);
+            // });
 
             // Detect when the user navigates back to the site
             function handleReturnToPage() {

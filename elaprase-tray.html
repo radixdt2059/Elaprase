@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <div class="hedaer-container">
+            <div class="top-bar primary-bg">
+                <div class="container">
+                    <div class="d-flex align-items-center justify-md-content-between">
+                        <div class="top-bar-link-wrapper">
+                            <ul class="topbar-links blue-fg">
+                                <li>
+                                    <button class="cursor-point text-decoration-none text-white bg-transparent border-0" title="Indication and Usage"> 
+                                        Indication and Usage <span id="icon-wrapper">+</span>
+                                    </button>
+                                </li>
+                            </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="page-information footer-bg indication_sec" style="display: none;">
+                <div class="container">
+
+
+                    <div class="page-information-wrapper font-19 black-fg">
+                        
+                        <p class="mb-1">
+                            ELAPRASE<sup>&reg;</sup> (Idursulfase) is indicated for patients with Hunter syndrome (Mucopolysaccharidosis II, MPS II). ELAPRASE has been shown to improve walking capacity in patients 5 years and older.
+                        </p>
+                        <br />
+                        <p class="mb-1">
+                            In patients 16 months to 5 years of age, no data are available to demonstrate improvement in disease-related symptoms or long term clinical outcome; however, treatment with ELAPRASE has reduced spleen volume similarly to that of adults and children 5
+                            years of age and older.
+                        </p>
+                        <br />
+                        <p class="mb-1">
+                            The safety and efficacy of ELAPRASE have not been established in pediatric patients less than 16 months of age.
+                        </p>
+                    </div>
+
+
+                </div>
+            </div>
+           </div>
+        </div>
+    </header>
+    <div class=" body-content">
+       
+
+      
+    </div>
+   
+    <script>
+
+        //var endPoint = "@HttpContext.Current.Application["country"]";
+        //var endPoint = "India";
+    $(document).ready(function () {
+                 
+        $(document).ready(function () {
+
+            const headerHeight = $('header').outerHeight();
+            const trayKey = 'indicationsTrayState';
+            const lastClosedTimeKey = 'indicationsLastClosedTime';
+            const currentPageKey = 'currentPageURL';
+            const navigationAwayKey = 'navigatedAway';
+            const AUTO_OPEN_MINUTES = 10; // Auto-open time limit in minutes
+            const CHECK_INTERVAL = 10000; // Check interval in milliseconds (10 seconds)
+            const buttonText = $(".ISI_tray_text_change");
+
+               // Get the current page URL (excluding query parameters and hash fragments)
+            const currentPageURL = window.location.href.split(/[?#]/)[0];
+
+              // Function to set a cookie
+              function setCookie(name, value, days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                const cookieString = `${name}=${value};expires=${date.toUTCString()};path=/;SameSite=Lax;Secure`; 
+                document.cookie = cookieString;
+            }
+
+            // Function to get a cookie value
+            function getCookie(name) {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        return cookie.substring(name.length + 1);
+                    }
+                }
+                return null;
+            }
+
+            // Function to open the tray
+            function openTray() {
+                $(".page-information").slideDown(300).addClass("tray-open");
+                $("#icon-wrapper").html("&minus;");
+                setCookie(trayKey, "open", 1);
+                setCookie(currentPageKey, currentPageURL, 1);
+                $(".topbar-links button").addClass("indication_link");
+
+                if ($(".ISI__section").hasClass("tray__open")) {
+                    $(".ISI__section").removeClass("tray__open");
+                    $(".ISI__section").removeClass("d-block");
+                    $('body').removeClass("overflow-hidden");
+                    $('.ISI__section').css('height', '100%');
+                    $(".ISI_tray_text_change").text('Important Safety Information including Boxed Warning for Anaphylaxis');
+                }
+            }
+
+            $(".open_tray").click(function () {
+                closeTray();
+            });
+
+            // Function to close the tray
+            function closeTray() {
+                $(".page-information").slideUp(300).removeClass("tray-open");
+                $("#icon-wrapper").html("+");
+                setCookie(trayKey, "closed", 1);
+                setCookie(lastClosedTimeKey, Date.now(), 1);
+                setCookie(currentPageKey, currentPageURL, 1);
+                $(".topbar-links button").removeClass("indication_link");
+                if ($(".ISI__section").hasClass("tray__open")) {
+                    $(".ISI__section").removeClass("tray__open");
+                    $(".ISI__section").removeClass("d-block");
+                    $('body').removeClass("overflow-hidden");
+                    $('.ISI__section').css('height', '100%');
+                }
+            }
+
+            // Check the tray state
+            function checkTrayState() {
+                const trayState = getCookie(trayKey);
+                const lastPageURL = getCookie(currentPageKey);
+                const lastClosedTime = parseInt(getCookie(lastClosedTimeKey), 10);
+
+
+               if (lastPageURL === currentPageURL) {
+                    // Same-page refresh detected: always open the tray
+                    openTray();
+                } else {
+                    // New page or first visit
+                    if (trayState === "open") {
+                        openTray();
+                    } else if (trayState === "closed" && lastClosedTime) {
+                        const elapsedMinutes = (Date.now() - lastClosedTime) / (1000 * 60);
+                        if (elapsedMinutes >= AUTO_OPEN_MINUTES) {
+                            openTray(); // Auto-open after timeout
+                        } else {
+                            closeTray();
+                        }
+                    } else {
+                        openTray(); // Default to open
+                    }
+
+                    // Update current page URL
+                   setCookie(currentPageKey, currentPageURL, 1);                }
+            }
+
+           
+            // Initialize tray state on page load
+            checkTrayState();
+
+            $('a.important_info').on('click', function (e) {
+                e.preventDefault(); // Prevent default link behavior
+                const targetOffset = Math.floor($('.ISI__section').offset().top); // Get the ISI section's offset from top
+                const scrollToPosition = targetOffset - headerHeight; // Calculate the position to scroll to, accounting for the header height
+
+                // Animate scroll to the ISI section
+                $('html, body').stop(true).animate(
+                    {
+                        scrollTop: scrollToPosition,
+                    },
+                    500 // Duration in milliseconds
+                );
+            });
+
+            // Event listener for tray toggle on the entire button
+            $("button[title='Indication and Usage']").on("click", function () {
+                if ($(".page-information").hasClass("tray-open")) {
+                    closeTray();
+                    //console.log('close');
+                } else {
+                    openTray();
+                    //console.log('open');
+                }
+            });
+
+            // Detect page visibility change to handle navigation away
+            document.addEventListener("visibilitychange", function() {
+                if (document.visibilityState === "hidden") {
+                    setCookie("navigatedAway", "true", 1);
+                }
+            });
+
+            // Detect navigation away
+            // $(window).on("beforeunload", function () {
+            //     setCookie("navigatedAway", "true", 1);
+            // });
+
+            // Detect when the user navigates back to the site
+            function handleReturnToPage() {
+                const navigatedAway = getCookie("navigatedAway");
+
+                if (navigatedAway === "true") {
+                    // Navigated away and came back: open the tray
+                    setCookie("navigatedAway", "false", 1);
+                    openTray();
+                }
+            }
+
+            // Handle return to the page (visibility and focus changes)
+            document.addEventListener("visibilitychange", function () {
+                if (document.visibilityState === "visible") {
+                    handleReturnToPage();
+                }
+            });
+
+            // Handle return to page via focus (fallback for some devices)
+            $(window).on("focus", function () {
+                if (document.visibilityState === "visible") {
+                    handleReturnToPage();
+                }
+            });
+
+            // Detect navigation via back-forward cache
+            window.addEventListener("pageshow", function (event) {
+                if (event.persisted) {
+                    handleReturnToPage();
+                }
+            });
+
+            // Periodically check if the tray should be opened automatically
+            setInterval(() => {
+                const trayState = localStorage.getItem(trayKey);
+                const lastClosedTime = parseInt(localStorage.getItem(lastClosedTimeKey), 10);
+
+                if (trayState === "closed" && lastClosedTime) {
+                    const elapsedMinutes = (Date.now() - lastClosedTime) / (1000 * 60);
+                    if (elapsedMinutes >= AUTO_OPEN_MINUTES) {
+                        openTray();
+                    }
+                }
+            }, CHECK_INTERVAL); // Check every 10 seconds
+
+
+            
+
+            $(".ISI_sticky_tray  .open_tray").click(function () {
+                // Dynamically calculate the viewport height excluding the browser's UI elements
+                const viewportHeight = window.innerHeight;
+                var subHeaderHeight = $('.hedaer-container').outerHeight();
+                const trayHeight = viewportHeight - subHeaderHeight;
+                var pageInformationHeight = subHeaderHeight - $('.page-information').outerHeight();
+                const trayPageHeight = viewportHeight - pageInformationHeight
+
+                $('.ISI__section').css('height', `${trayHeight}px`);
+
+                if ($(".page-information").is(":visible")) {
+                    $('.page-information').slideUp(100);
+                    span.innerHTML = '+';
+                    $(".topbar-links button").removeClass("indication_link");
+                    $('.ISI__section').css('height', `${trayPageHeight}px`);
+                    console.log('sf :' + trayPageHeight);
+                }
+            });
+        });
+    });
+
+    </script>
+</body>
+</html>

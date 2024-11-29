@@ -198,16 +198,16 @@
             });
 
             // Detect page visibility change to handle navigation away
-            document.addEventListener("visibilitychange", function() {
-                if (document.visibilityState === "hidden") {
-                    setCookie("navigatedAway", "true", 1);
-                }
-            });
+            // document.addEventListener("visibilitychange", function() {
+            //     if (document.visibilityState === "hidden") {
+            //         setCookie("navigatedAway", "true", 1);
+            //     }
+            // });
 
             // Detect navigation away
-            // $(window).on("beforeunload", function () {
-            //     setCookie("navigatedAway", "true", 1);
-            // });
+            $(window).on("beforeunload", function () {
+                setCookie("navigatedAway", "true", 1);
+            });
 
             // Detect when the user navigates back to the site
             function handleReturnToPage() {

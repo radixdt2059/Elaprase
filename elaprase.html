@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+    
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script
-  src="https://code.jquery.com/jquery-3.7.1.min.js"
-  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-  crossorigin="anonymous"></script>
+
+
 </head>
-<body>
+<body id="clinicalTrial">
+    
     <header>
         <div class="hedaer-container">
             <div class="top-bar primary-bg">
@@ -50,10 +46,6 @@
                 </div>
             </div>
            </div>
-        </div>
-
-        <div>
-            <a href="https://www.takeda.com/">Takeda</a>
         </div>
     </header>
     <div class=" body-content">
@@ -198,36 +190,16 @@
             });
 
             // Detect page visibility change to handle navigation away
-            // document.addEventListener("visibilitychange", function() {
-            //     if (document.visibilityState === "hidden") {
-            //         setCookie("navigatedAway", "true", 1);
-            //     }
-            // });
+            document.addEventListener("visibilitychange", function() {
+                if (document.visibilityState === "hidden") {
+                    setCookie("navigatedAway", "true", 1);
+                }
+            });
 
             // Detect navigation away
             // $(window).on("beforeunload", function () {
             //     setCookie("navigatedAway", "true", 1);
             // });
-
-            // Detect page visibility change to handle navigation away
-            document.addEventListener("visibilitychange", function() {
-                // If the page is hidden, set a flag that indicates the user has navigated away
-                if (document.visibilityState === "hidden") {
-                    setCookie("navigatedAway", "true", 1);
-                }
-                // When the page becomes visible again, don't set "navigatedAway" flag if the user just switched tabs
-                else if (document.visibilityState === "visible") {
-                    const navigatedAway = getCookie("navigatedAway");
-
-
-
-                    // Only open the tray if the user has actually navigated away and then returned
-                    if (navigatedAway === "true") {
-                        setCookie("navigatedAway", "false", 1);
-                        openTray(); // Open the tray because the user returned after navigating away
-                    }
-                }
-            });
 
             // Detect when the user navigates back to the site
             function handleReturnToPage() {
@@ -299,5 +271,7 @@
     });
 
     </script>
+
+
 </body>
 </html>

@@ -197,12 +197,17 @@
                 }
             });
 
-            // Detect page visibility change to handle navigation away
-            document.addEventListener("visibilitychange", function() {
-                if (document.visibilityState === "hidden") {
-                    setCookie("navigatedAway", "true", 1);
-                }
-            });
+            const mediaQuery = window.matchMedia('(max-width: 991px)')
+                // Check if the media query is true
+                if (mediaQuery.matches) {
+                // Detect page visibility change to handle navigation away
+                document.addEventListener("visibilitychange", function() {
+                    if (document.visibilityState === "hidden") {
+                        setCookie("navigatedAway", "true", 1);
+                    }
+                });
+            }
+            
 
             // Detect navigation away
             // $(window).on("beforeunload", function () {
